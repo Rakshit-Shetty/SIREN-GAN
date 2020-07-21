@@ -10,27 +10,28 @@ from skimage import io, transform
 from PIL import Image
 
 trans = transforms.Compose([
-	transforms.RandomCrop(256),
-	transforms.ToTensor()
-	])
+	transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
 
 class PreProcessDataset(Dataset):
 	"""docstring for PreProcessDataset"""
-	def __init__(self, content_dir, style_dir, transforms=trans):
+	def __init__(self, content_dir, transforms=trans):
 		super().__init__()
 		content_dir_resized = content_dir + '_resized'
-		style_dir_resized = style_dir + '_resized'
-		if not (os.path.exists(content_dir_resized) and os.path.exists(style_dir_resized)):
+		#style_dir_resized = style_dir + '_resized'
+		if not (os.path.exists(content_dir_resized)):
 			os.mkdir(content_dir_resized)
-			os.mkdir(style_dir_resized)
+			#os.mkdir(style_dir_resized)
 			self._resize(content_dir, content_dir_resized)
-			self._resize(style_dir, style_dir_resized)
+			#self._resize(style_dir, style_dir_resized)
 
 		content_images = glob.glob((content_dir_resized + '/*'))
 		np.random.shuffle(content_images)
-		style_images = glob.glob((style_dir_resized + '/*'))
-		np.random.shuffle(style_images)
-		self.image_pairs = list(zip(content_images, style_images))
+		#style_images = glob.glob((style_dir_resized + '/*'))
+		#np.random.shuffle(style_images)
+		#self.image_pairs = list(zip(content_images, style_images))
+		self.image = list(content_images)
 		self.transforms = transforms
 
 	@staticmethod
@@ -56,17 +57,17 @@ class PreProcessDataset(Dataset):
 				continue
 
 	def __len__(self):
-		return len(self.image_pairs)
+		return len(self.image)
 
 	def __getitem__(self, index):
-		content_image, style_image = self.image_pairs[index]
+		content_image = self.image[index]
 		content_image = Image.open(content_image)
-		style_image = Image.open(style_image)
+		#style_image = Image.open(style_image)
 
 		if self.transforms:
 			content_image = self.transforms(content_image)
-			style_image = self.transforms(style_image)
-			return content_image, style_image
+			#style_image = self.transforms(style_image)
+			return content_image
 
 if __name__ == '__main__':
 	cli = argparse.ArgumentParser(description='PreProcess Dataset to get transformed images')
