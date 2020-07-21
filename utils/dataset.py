@@ -16,26 +16,27 @@ trans = transforms.Compose([
 
 class PreProcessDataset(Dataset):
 	"""docstring for PreProcessDataset"""
-	def __init__(self, content_dir, transforms=trans):
+	def __init__(self, root, train=True, transform=trans):
 		super().__init__()
-		content_dir_resized = content_dir + '_resized'
-		#style_dir_resized = style_dir + '_resized'
-		if not (os.path.exists(content_dir_resized)):
-			os.mkdir(content_dir_resized)
-			#os.mkdir(style_dir_resized)
-			self._resize(content_dir, content_dir_resized)
-			#self._resize(style_dir, style_dir_resized)
-
-		content_images = glob.glob((content_dir_resized + '/*'))
-		np.random.shuffle(content_images)
-		#style_images = glob.glob((style_dir_resized + '/*'))
-		#np.random.shuffle(style_images)
-		#self.image_pairs = list(zip(content_images, style_images))
-		self.image = list(content_images)
-		self.transforms = transforms
+		self.root = os.path.expanduser(root)
+		self.train = train
+		if self.train:
+			self.train_dir = os.path.join(self.root + 'train')
+			self._resize(self.train_dir)
+			train_images = glob.glob((self.train_dir + '/*'))
+			np.random.shuffle(train_images)
+			self.train_image = list(train_images)
+		else:
+			self.test_dir = os.path.join(self.root + 'test')
+			self._resize(self.test_dir)
+			test_images = glob.glob((self.test_dir + '/*'))
+			np.random.shuffle(test_images)
+			self.test_image = list(test_images)
+		
+		self.transforms = transform
 
 	@staticmethod
-	def _resize(source_dir, target_dir):
+	def _resize(source_dir):
 		print(f'Start Resizing {source_dir} ')
 		for i in tqdm(os.listdir(source_dir)):
 			filename = os.path.basename(i)
@@ -52,33 +53,27 @@ class PreProcessDataset(Dataset):
 						W = 512
 						H = int(ratio*W)
 					image = transform.resize(image, (H, W), mode='reflect', anti_aliasing=True)
-					io.imsave(os.path.join(target_dir, filename), image)
+					io.imsave(os.path.join(source_dir, filename), image)
 			except:
 				continue
 
 	def __len__(self):
-		return len(self.image)
+		if self.train:
+			return len(self.train_dir)
+		else:
+			return len(self.test_dir)
 
 	def __getitem__(self, index):
-		content_image = self.image[index]
-		content_image = Image.open(content_image)
-		#style_image = Image.open(style_image)
-
+		if self.train:
+			image = self.train_image[index]
+			image = Image.open(image)
+			#style_image = Image.open(style_image)
+		else:
+			image = self.test_image[index]
+			image = Image.open(image)
+		
 		if self.transforms:
-			content_image = self.transforms(content_image)
+			image = self.transforms(image)
 			#style_image = self.transforms(style_image)
-			return content_image
+			return image
 
-if __name__ == '__main__':
-	cli = argparse.ArgumentParser(description='PreProcess Dataset to get transformed images')
-	cli.add_argument('--train_content_dir', type=str, default='/data/content',
-					help='content images dir to train on')
-	cli.add_argument('--train_style_dir', type=str, default='/data/style',
-					help='style images dir to train on')
-	cli.add_argument('--test_content_dir', type=str, default='/data/content',
-					help='content images to test on')
-	cli.add_argument('--test_style_dir', type=str, default='/data/style',
-					help='style images to test on')
-	args = cli.parse_args()
-	PreProcessDataset(args.train_content_dir, args.train_style_dir)
-	PreProcessDataset(args.test_content_dir, args.test_style_dir)

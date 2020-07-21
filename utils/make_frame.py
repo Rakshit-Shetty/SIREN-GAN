@@ -10,7 +10,6 @@ img_dir.mkdir(exist_ok=True)
 
 cap = cv2.VideoCapture("path_to_video")
 length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-print( length )
 
 train = length * 0.8
 test = length - train
