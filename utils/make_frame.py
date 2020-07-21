@@ -8,7 +8,7 @@ save_dir.mkdir(exist_ok=True)
 img_dir = save_dir.joinpath('images/')
 img_dir.mkdir(exist_ok=True)
 
-cap = cv2.VideoCapture("rakshit.mp4")
+cap = cv2.VideoCapture("path_to_video")
 length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 print( length )
 
@@ -20,6 +20,7 @@ while (cap.isOpened()):
     flag, frame = cap.read()
     i += 1
     if flag == False:
+        cap.release()
         break
     if i < train:
     	train_dir = img_dir.joinpath('train')
