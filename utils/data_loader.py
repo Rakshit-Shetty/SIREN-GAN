@@ -2,6 +2,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torch.utils.data as data_utils
 from utils.fashion_mnist import MNIST, FashionMNIST
+from dataset import PreProcessDataset
 
 def get_data_loader(args):
 
@@ -57,6 +58,9 @@ def get_data_loader(args):
         ])
         train_dataset = dset.ImageFolder(root=args.dataroot,transfrom = trans)
         test_dataset = dset.ImageFolder(root=args.dataroot, transform = trans)
+    elif args.dataset == 'custom':
+        train_dataset = PreProcessDataset(args.dataroot)
+        test_dataset = PreProcessDataset(args.dataroot)
     # Check if everything is ok with loading datasets
     assert train_dataset
     assert test_dataset
