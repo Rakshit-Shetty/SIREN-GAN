@@ -9,6 +9,8 @@ from torchvision import transforms
 from skimage import io, transform
 from PIL import Image
 
+processed_folder = 'processed'
+
 trans = transforms.Compose([
 	transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
@@ -21,14 +23,20 @@ class PreProcessDataset(Dataset):
 		self.root = os.path.expanduser(root)
 		self.train = train
 		if self.train:
-			self.train_dir = os.path.join(self.root + '/train')
-			self._resize(self.train_dir)
+			self.train_source = os.path.join(self.root, 'train')
+			self.train_dir = os.path.join(self.root, processed_folder, 'train')
+			if not self.train_dir.exists():
+				self.train_dir.mkdir()
+				self._resize(self.train_source, self.train_dir)
 			train_images = glob.glob((self.train_dir + '/*'))
 			np.random.shuffle(train_images)
 			self.train_image = list(train_images)
 		else:
-			self.test_dir = os.path.join(self.root + '/test')
-			self._resize(self.test_dir)
+			self.test_source = os.path.join(self.root, 'test')
+			self.test_dir = os.path.join(self.root, processed_folder, 'test')
+			if not self.test_dir.exists():
+				self.test_dir.mkdir(exist_ok=True)
+				self._resize(self.test_source, self.test_dir)
 			test_images = glob.glob((self.test_dir + '/*'))
 			np.random.shuffle(test_images)
 			self.test_image = list(test_images)
@@ -36,7 +44,7 @@ class PreProcessDataset(Dataset):
 		self.transforms = transform
 
 	@staticmethod
-	def _resize(source_dir):
+	def _resize(source_dir, target_dir):
 		print(f'Start Resizing {source_dir} ')
 		for i in tqdm(os.listdir(source_dir)):
 			filename = os.path.basename(i)
@@ -53,7 +61,7 @@ class PreProcessDataset(Dataset):
 						W = 512
 						H = int(ratio*W)
 					image = transform.resize(image, (H, W), mode='reflect', anti_aliasing=True)
-					io.imsave(os.path.join(source_dir, filename), image)
+					io.imsave(os.path.join(target_dir, filename), image)
 			except:
 				continue
 
@@ -65,11 +73,11 @@ class PreProcessDataset(Dataset):
 
 	def __getitem__(self, index):
 		if self.train:
-			image = self.train_image[index]
+			image, target = self.train_image[index], 1
 			image = Image.open(image)
 			#style_image = Image.open(style_image)
 		else:
-			image = self.test_image[index]
+			image, target = self.test_image[index], 1
 			image = Image.open(image)
 		
 		if self.transforms:
