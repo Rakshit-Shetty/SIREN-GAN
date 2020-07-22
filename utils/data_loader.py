@@ -2,7 +2,7 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torch.utils.data as data_utils
 from utils.fashion_mnist import MNIST, FashionMNIST
-from dataset import PreProcessDataset
+from utils.dataset import PreProcessDataset
 
 def get_data_loader(args):
 

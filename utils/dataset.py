@@ -21,13 +21,13 @@ class PreProcessDataset(Dataset):
 		self.root = os.path.expanduser(root)
 		self.train = train
 		if self.train:
-			self.train_dir = os.path.join(self.root + 'train')
+			self.train_dir = os.path.join(self.root + '/train')
 			self._resize(self.train_dir)
 			train_images = glob.glob((self.train_dir + '/*'))
 			np.random.shuffle(train_images)
 			self.train_image = list(train_images)
 		else:
-			self.test_dir = os.path.join(self.root + 'test')
+			self.test_dir = os.path.join(self.root + '/test')
 			self._resize(self.test_dir)
 			test_images = glob.glob((self.test_dir + '/*'))
 			np.random.shuffle(test_images)
