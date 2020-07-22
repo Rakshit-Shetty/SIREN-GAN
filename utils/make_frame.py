@@ -5,7 +5,7 @@ import os
 save_dir = Path('../dataset/')
 save_dir.mkdir(exist_ok=True)
 
-cap = cv2.VideoCapture("path_to_video")
+cap = cv2.VideoCapture("/content/drive/My Drive/Test.mp4")
 length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 train = length * 0.8
