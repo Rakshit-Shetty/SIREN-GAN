@@ -83,5 +83,5 @@ class PreProcessDataset(Dataset):
 		if self.transforms:
 			image = self.transforms(image)
 			#style_image = self.transforms(style_image)
-			return image
+		return image, target
 
