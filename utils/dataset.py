@@ -25,8 +25,8 @@ class PreProcessDataset(Dataset):
 		if self.train:
 			self.train_source = os.path.join(self.root, 'train')
 			self.train_dir = os.path.join(self.root, processed_folder, 'train')
-			if not self.train_dir.exists():
-				self.train_dir.mkdir()
+			if not os.path.exists(self.train_dir):
+				os.makedirs(self.train_dir)
 				self._resize(self.train_source, self.train_dir)
 			train_images = glob.glob((self.train_dir + '/*'))
 			np.random.shuffle(train_images)
@@ -34,8 +34,8 @@ class PreProcessDataset(Dataset):
 		else:
 			self.test_source = os.path.join(self.root, 'test')
 			self.test_dir = os.path.join(self.root, processed_folder, 'test')
-			if not self.test_dir.exists():
-				self.test_dir.mkdir(exist_ok=True)
+			if not os.path.exists(self.test_dir):
+				os.makedirs(self.test_dir)
 				self._resize(self.test_source, self.test_dir)
 			test_images = glob.glob((self.test_dir + '/*'))
 			np.random.shuffle(test_images)
