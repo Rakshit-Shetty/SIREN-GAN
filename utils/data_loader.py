@@ -71,8 +71,9 @@ def get_data_loader(args):
 		test_dataset = dset.ImageFolder(root=args.dataroot, transform = trans)
 	elif args.dataset == 'custom':
 		trans = transforms.Compose([
-		transforms.ToTensor(),
-		transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+			transforms.Resize(32),
+			transforms.ToTensor(),
+			transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 		])
 		train_dataset = PreProcessDataset(args.dataroot, train=True, transform=trans)
 		test_dataset = PreProcessDataset(args.dataroot, train=False, transform=trans)
