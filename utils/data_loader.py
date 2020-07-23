@@ -34,6 +34,16 @@ def get_data_loader(args):
 		train_dataset = dset.CIFAR10(root=args.dataroot, train=True, download=args.download, transform=trans)
 		test_dataset = dset.CIFAR10(root=args.dataroot, train=False, download=args.download, transform=trans)
 
+	elif args.dataset == 'celeba':
+		trans = transforms.Compose([
+			transforms.Resize(32),
+			transforms.ToTensor(),
+			transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+		])
+
+		train_dataset = dset.CelebA(root=args.dataroot, train=True, download=args.download, transform=trans)
+		test_dataset = dset.CelebA(root=args.dataroot, train=False, download=args.download, transform=trans)
+
 	elif args.dataset == 'stl10':
 		trans = transforms.Compose([
 			transforms.Resize(32),
@@ -42,6 +52,7 @@ def get_data_loader(args):
 		])
 		train_dataset = dset.STL10(root=args.dataroot, train=True, download=args.download, transform=trans)
 		test_dataset = dset.STL10(root=args.dataroot, train=False, download=args.download, transform=trans)
+		
 	elif args.dataset == 'lsun':
 		trans = transforms.Compose([
 			transforms.Resize(32),

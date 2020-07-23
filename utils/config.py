@@ -7,7 +7,7 @@ def parse_args():
     parser.add_argument('--model', type=str, default='DCGAN', choices=['GAN', 'DCGAN', 'DCGAN-SIREN', 'SIREN-GAN' , 'RELU-GAN','HYPERGAN-SIREN', 'WGAN-CP', 'WGAN-GP'])
     parser.add_argument('--is_train', type=str, default='True')
     parser.add_argument('--dataroot', required=True, help='path to dataset')
-    parser.add_argument('--dataset', type=str, default='mnist', choices=['mnist', 'fashion-mnist', 'cifar', 'stl10', 'custom'],
+    parser.add_argument('--dataset', type=str, default='mnist', choices=['mnist', 'fashion-mnist', 'cifar', 'stl10', 'custom', 'celeba'],
                             help='The name of dataset')
     parser.add_argument('--download', type=str, default='False')
     parser.add_argument('--epochs', type=int, default=50, help='The number of epochs to run')
