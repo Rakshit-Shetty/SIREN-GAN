@@ -41,8 +41,8 @@ def get_data_loader(args):
 			transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
 		])
 
-		train_dataset = dset.CelebA(root=args.dataroot, train=True, download=args.download, transform=trans)
-		test_dataset = dset.CelebA(root=args.dataroot, train=False, download=args.download, transform=trans)
+		train_dataset = dset.CelebA(root=args.dataroot, split='train', download=args.download, transform=trans)
+		test_dataset = dset.CelebA(root=args.dataroot, split='test', download=args.download, transform=trans)
 
 	elif args.dataset == 'stl10':
 		trans = transforms.Compose([
